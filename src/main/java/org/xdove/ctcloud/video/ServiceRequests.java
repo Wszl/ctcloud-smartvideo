@@ -41,6 +41,8 @@ public class ServiceRequests {
     public static final String PATH_DICT_COMMON_AREA = "/api/dict/common/area";
     /** 获取网络摄像机设备相关信息 */
     public static final String PATH_DICT_DEVICE_SELECT = "/api/dict/device/select";
+    /** 媒体预览开启 */
+    public static final String PATH_DICT_MEDIA_PLAY = "/api/dict/media/play";
     /** 开启直播能力，并开启获取HTTP-M3U8地址 */
     public static final String PATH_DICT_MEDIA_LIVE = "/api/dict/media/live";
     /** 获取各类设备相关信息 */
@@ -133,6 +135,38 @@ public class ServiceRequests {
         param.put("pagenum", parseIntParam(pagenum));
         try {
             final String s = this.postRequest(PATH_DICT_DEVICE_QUERY, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 媒体预览开启
+     * 获取设备实时播放地址
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @param deviceid 设备编号 无默认值
+     * @param networktype 网络协议(0:UDP;1:TCP) 无默认值
+     * @param accesstype 接入网络类型(0:内网;1:公网;2:其他) 默认值为 1
+     * @param accessaddr 请求API的IP地址，当accesstype为2时为必填项 默认值为 null
+     * @return
+     */
+    public Map<String, Object> dictMediaPlay(String memberkey, @NonNull String deviceid, Integer networktype,
+                                             Integer accesstype, String accessaddr) {
+        if (log.isTraceEnabled()) {
+            log.trace("request dictMediaPlay memberkey=[{}], deviceid=[{}], networktype=[{}], accesstype=[{}], " +
+                    "accessaddr=[{}]", memberkey, deviceid, networktype, accesstype, accessaddr);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        param.put("deviceid", deviceid);
+        param.put("networktype", parseIntParam(networktype));
+        param.put("accesstype", parseIntParam(accesstype));
+        param.put("accessaddr", accessaddr);
+        try {
+            final String s = this.postRequest(PATH_DICT_MEDIA_PLAY, param);
             final JSONObject jsonObject = JSONObject.parseObject(s);
             return jsonObject.getInnerMap();
         } catch (IOException e) {
