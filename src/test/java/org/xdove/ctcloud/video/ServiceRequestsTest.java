@@ -3,7 +3,6 @@ package org.xdove.ctcloud.video;
 
 import org.apache.http.impl.client.HttpClients;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.security.InvalidKeyException;
@@ -21,6 +20,7 @@ public class ServiceRequestsTest {
         config.setAppKey(System.getenv("APP_KEY"));
         config.setSecret(System.getenv("APP_SECRET"));
         config.setTenantKey(System.getenv("APP_TEN"));
+        config.setEncoding("GBK");
         this.serviceRequests = new ServiceRequests(HttpClients.createDefault(), config);
     }
 
@@ -32,7 +32,7 @@ public class ServiceRequestsTest {
 
     @Test
     public void testDictDeviceSelect() {
-        final Map<String, Object> stringObjectMap = this.serviceRequests.dictDeviceSelect(null, null, 0, null, null);
+        final Map<String, Object> stringObjectMap = this.serviceRequests.dictDeviceSelect(null, null, 1, 10000, 1);
         System.out.print(stringObjectMap);
     }
 
@@ -59,6 +59,40 @@ public class ServiceRequestsTest {
     @Test
     public void testSystemAccessSelect() {
         final Map<String, Object> stringObjectMap = this.serviceRequests.systemAccessSelect(null, null, null, null, null, null);
+        System.out.println(stringObjectMap);
+    }
+
+    /**************************
+     *      终端互动接口测试
+     **************************/
+
+    @Test
+    public void testTalkAccountSelect() {
+        final Map<String, Object> stringObjectMap = this.serviceRequests.talkAccountSelect(null, null, null, null, null);
+        System.out.println(stringObjectMap);
+    }
+
+    @Test
+    public void testSystemDeviceTerminal() {
+        final Map<String, Object> stringObjectMap = this.serviceRequests.systemDeviceTerminal(null);
+        System.out.println(stringObjectMap);
+    }
+
+    @Test
+    public void testSystemVoiceApply() {
+        final Map<String, Object> stringObjectMap = this.serviceRequests.systemVoiceApply(null, null, null);
+        System.out.println(stringObjectMap);
+    }
+
+    @Test
+    public void testSystemVoiceConfirm() {
+        final Map<String, Object> stringObjectMap = this.serviceRequests.systemVoiceConfirm(null, null, null, null);
+        System.out.println(stringObjectMap);
+    }
+
+    @Test
+    public void testSystemVoiceDisconnect() {
+        final Map<String, Object> stringObjectMap = this.serviceRequests.systemVoiceDisconnect(null, null, null, null);
         System.out.println(stringObjectMap);
     }
 }

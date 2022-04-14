@@ -36,30 +36,54 @@ public class ServiceRequests {
     private HttpClient client;
     private Config config;
     private MessageDigest messageDigest;
+    private String urlPrefix;
 
     /** 提供获取区域编码的能力 */
-    public static final String PATH_DICT_COMMON_AREA = "/api/dict/common/area";
+    public static final String PATH_DICT_COMMON_AREA = "/common/area";
     /** 获取网络摄像机设备相关信息 */
-    public static final String PATH_DICT_DEVICE_SELECT = "/api/dict/device/select";
+    public static final String PATH_DICT_DEVICE_SELECT = "/device/select";
     /** 媒体预览开启 */
-    public static final String PATH_DICT_MEDIA_PLAY = "/api/dict/media/play";
+    public static final String PATH_DICT_MEDIA_PLAY = "/media/play";
     /** 开启直播能力，并开启获取HTTP-M3U8地址 */
-    public static final String PATH_DICT_MEDIA_LIVE = "/api/dict/media/live";
+    public static final String PATH_DICT_MEDIA_LIVE = "/media/live";
     /** 获取各类设备相关信息 */
-    public static final String PATH_DICT_DEVICE_QUERY = "/api/dict/device/query";
+    public static final String PATH_DICT_DEVICE_QUERY = "/device/query";
     /** 查询设备 */
     public static final String PATH_SYSTEM_ACCESS_SELECT = "/system/access/select";
+    /**************************
+     *      终端互动接口
+     **************************/
+    /** 接入账号查询 */
+    public static final String PATH_TALK_ACCOUNT_SELECT = "/talk/account/select";
+    /** 查询终端设备 */
+    public static final String PATH_SYSTEM_DEVICE_TERMINAL = "/system/deviceterminal";
+    /** 语音广播申请 */
+    public static final String PATH_SYSTEM_VOICE_APPLY = "/system/voice/apply";
+    /** 语音广播确认 */
+    public static final String PATH_SYSTEM_VOICE_CONFIRM = "/system/voice/apply";
+    /** 语音广播断开 */
+    public static final String PATH_SYSTEM_VOICE_DISCONNECT = "/system/voice/disconnet";
 
     public ServiceRequests(Config config) throws NoSuchAlgorithmException, InvalidKeyException {
         this.config = config;
         this.client =  HttpClientBuilder.create().build();
         messageDigest = MessageDigest.getInstance("MD5");
+        if (Objects.nonNull(config.getUriPrefix())) {
+            this.urlPrefix = config.getUriPrefix();
+        } else {
+            this.urlPrefix = "/api/dict";
+        }
     }
 
     public ServiceRequests(HttpClient client, Config config) throws NoSuchAlgorithmException, InvalidKeyException {
         this.client = client;
         this.config = config;
         messageDigest = MessageDigest.getInstance("MD5");
+        if (Objects.nonNull(config.getUriPrefix())) {
+            this.urlPrefix = config.getUriPrefix();
+        } else {
+            this.urlPrefix = "/api/dict";
+        }
     }
 
     public Map<String, Object> dictCommonArea(String areaCode) {
@@ -229,7 +253,145 @@ public class ServiceRequests {
         }
     }
 
+    /**************************************************************************************************
+     *                              终端互动接口
+     **************************************************************************************************/
 
+    /**
+     * 接入账号查询
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @param accountIds 接入编号组，未设置获取全部账号信息
+     * @param resultType 返回类型(0:分页;1:列表)
+     * @param pageSize 显示条数(范围:1-100)
+     * @param pageNum 当前页码
+     * @return
+     */
+    public Map<String, Object> talkAccountSelect(String memberkey, String accountIds, Integer resultType, Integer pageSize,
+                                                    Integer pageNum) {
+        if (log.isTraceEnabled()) {
+            log.trace("request talkAccountSelect memberkey=[{}], accountIds=[{}], resultType=[{}], pageSize=[{}]," +
+                    "pageNum=[{}]", memberkey, accountIds, resultType, pageSize, pageNum);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        param.put("accountIds",  accountIds);
+        param.put("resultType",  parseIntParam(resultType));
+        param.put("pageSize",  parseIntParam(pageSize));
+        param.put("pageNum",  parseIntParam(pageNum));
+        try {
+            final String s = this.postRequest(PATH_TALK_ACCOUNT_SELECT, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 查询终端设备
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @return
+     */
+    public Map<String, Object> systemDeviceTerminal(String memberkey) {
+        if (log.isTraceEnabled()) {
+            log.trace("request systemDeviceTerminal memberkey=[{}]", memberkey);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        try {
+            final String s = this.postRequest(PATH_SYSTEM_DEVICE_TERMINAL, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 语音广播申请
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @param sourceId 源终端设备号
+     * @param ip 平台 ip
+     * @return
+     */
+    public Map<String, Object> systemVoiceApply(String memberkey, @NonNull String sourceId, @NonNull String ip) {
+        if (log.isTraceEnabled()) {
+            log.trace("request systemVoiceApply memberkey=[{}], sourceId=[{}], ip=[{}]",
+                    memberkey, sourceId, ip);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        param.put("sourceId", sourceId);
+        param.put("ip", ip);
+        try {
+            final String s = this.postRequest(PATH_SYSTEM_VOICE_APPLY, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 语音广播确认
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @param sourceId 源终端设备号
+     * @param targetId 目标设备号
+     * @param serialNum 推流唯一序列号
+     * @return
+     */
+    public Map<String, Object> systemVoiceConfirm(String memberkey, @NonNull String sourceId, @NonNull String targetId,
+                                                @NonNull String serialNum) {
+        if (log.isTraceEnabled()) {
+            log.trace("request systemVoiceConfirm memberkey=[{}], sourceId=[{}], targetId=[{}], serialNum=[{}]",
+                    memberkey, sourceId, targetId, serialNum);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        param.put("sourceId", sourceId);
+        param.put("targetId", targetId);
+        param.put("serialNum", serialNum);
+        try {
+            final String s = this.postRequest(PATH_SYSTEM_VOICE_CONFIRM, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 语音广播断开
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @param sourceId 源终端设备号
+     * @param targetId 目标设备号
+     * @param serialNum 推流唯一序列号
+     * @return
+     */
+    public Map<String, Object> systemVoiceDisconnect(String memberkey, @NonNull String sourceId, @NonNull String targetId,
+                                                  @NonNull String serialNum) {
+        if (log.isTraceEnabled()) {
+            log.trace("request systemVoiceDisconnet memberkey=[{}], sourceId=[{}], targetId=[{}], serialNum=[{}]",
+                    memberkey, sourceId, targetId, serialNum);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        param.put("sourceId", sourceId);
+        param.put("targetId", targetId);
+        param.put("serialNum", serialNum);
+        try {
+            final String s = this.postRequest(PATH_SYSTEM_VOICE_DISCONNECT, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
 
     private String parseIntParam(Integer o) {
         if (Objects.isNull(o)) {
@@ -243,7 +405,7 @@ public class ServiceRequests {
      * @return
      */
     private String combPath(String path) {
-        return config.getApiUrl() + path + "?appkey=" + config.getAppKey();
+        return config.getApiUrl() + this.urlPrefix + path + "?appkey=" + config.getAppKey();
     }
 
     /**
@@ -285,14 +447,13 @@ public class ServiceRequests {
 
         try {
             final HttpResponse response = client.execute(post);
+            String respContent = readInputStream(response.getEntity().getContent(),
+                    Objects.isNull(response.getEntity().getContentEncoding()) ? config.getEncoding() : response.getEntity().getContentEncoding().getValue());
             if (log.isDebugEnabled()) {
                 log.debug("path=[{}], params=[{}], response status=[{}] content=[{}]", path, p,
-                        response.getStatusLine().getStatusCode(),
-                        readInputStream(response.getEntity().getContent(),
-                                Objects.isNull(response.getEntity().getContentEncoding()) ? config.getEncoding() : response.getEntity().getContentEncoding().getValue()));
+                        response.getStatusLine().getStatusCode(), respContent);
             }
-            return readInputStream(response.getEntity().getContent(),
-                            Objects.isNull(response.getEntity().getContentEncoding()) ? config.getEncoding() : response.getEntity().getContentEncoding().getValue());
+            return respContent;
         } catch (IOException e) {
             log.info("path=[{}], params=[{}] error.", path, p, e);
             throw e;

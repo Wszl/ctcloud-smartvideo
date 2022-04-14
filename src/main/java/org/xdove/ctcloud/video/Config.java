@@ -12,4 +12,5 @@ public class Config {
     private String appKey;
     private String secret;
     private String encoding = "utf8";
+    private String uriPrefix;
 }
