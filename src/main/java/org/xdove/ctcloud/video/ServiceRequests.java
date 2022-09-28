@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSONObject;
 import lombok.NonNull;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -15,6 +17,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.activation.MimeType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -443,6 +446,7 @@ public class ServiceRequests {
         if (log.isDebugEnabled()) {
             log.debug("post request path=[{}], body=[{}]", url, readInputStream(body.getContent(), config.getEncoding()));
         }
+        post.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
         post.setEntity(body);
 
         try {
