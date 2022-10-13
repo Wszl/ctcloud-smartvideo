@@ -20,7 +20,8 @@ public class ServiceRequestsTest {
         config.setAppKey(System.getenv("APP_KEY"));
         config.setSecret(System.getenv("APP_SECRET"));
         config.setTenantKey(System.getenv("APP_TEN"));
-        config.setEncoding("GBK");
+        config.setUriPrefix("/api/dict");
+        config.setEncoding("UTF8");
         this.serviceRequests = new ServiceRequests(HttpClients.createDefault(), config);
     }
 
@@ -69,6 +70,36 @@ public class ServiceRequestsTest {
     @Test
     public void testTalkAccountSelect() {
         final Map<String, Object> stringObjectMap = this.serviceRequests.talkAccountSelect(null, null, null, null, null);
+        System.out.println(stringObjectMap);
+    }
+
+    @Test
+    public void testTalkAccess() {
+        final String targetId = System.getenv("TARGET_ID");
+        final Map<String, Object> stringObjectMap = this.serviceRequests.talkAccess(null, null, null, targetId);
+        System.out.println(stringObjectMap);
+    }
+
+    @Test
+    public void testTalkPlay() {
+        final String targetId = System.getenv("TARGET_ID");
+        final Map<String, Object> stringObjectMap = this.serviceRequests.talkPlay(null, null, null, targetId);
+        System.out.println(stringObjectMap);
+    }
+
+    @Test
+    public void testTalkStart() {
+        final String targetId = System.getenv("TARGET_ID");
+        final String sourceId = System.getenv("SOURCE_ID");
+        final Map<String, Object> stringObjectMap = this.serviceRequests.talkStart(null, targetId, sourceId);
+        System.out.println(stringObjectMap);
+    }
+
+    @Test
+    public void testTalkStop() {
+        final String targetId = System.getenv("TARGET_ID");
+        final String sourceId = System.getenv("SOURCE_ID");
+        final Map<String, Object> stringObjectMap = this.serviceRequests.talkStop(null, targetId, sourceId);
         System.out.println(stringObjectMap);
     }
 

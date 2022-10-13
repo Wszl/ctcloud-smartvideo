@@ -58,6 +58,14 @@ public class ServiceRequests {
      **************************/
     /** 接入账号查询 */
     public static final String PATH_TALK_ACCOUNT_SELECT = "/talk/account/select";
+    /** 接入地址获取 */
+    private static final String PATH_TALK_ACCESS = "/talk/access";
+    /** 终端视频呼叫 */
+    private static final String PATH_TALK_PLAY = "/talk/play";
+    /** 终端互动开启 */
+    private static final String PATH_TALK_START = "/talk/start";
+    /** 终端互动关闭 */
+    private static final String PATH_TALK_STOP = "/talk/stop";
     /** 查询终端设备 */
     public static final String PATH_SYSTEM_DEVICE_TERMINAL = "/system/deviceterminal";
     /** 语音广播申请 */
@@ -283,6 +291,114 @@ public class ServiceRequests {
         param.put("pageNum",  parseIntParam(pageNum));
         try {
             final String s = this.postRequest(PATH_TALK_ACCOUNT_SELECT, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 接入地址获取
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @param accesstype 接入网络类型(0:内网;1:公网;2:其他
+     * @param accessaddr 请求API的IP地址，当accesstype为2时为必填项
+     * @param targetid 目标方终端接入编码
+     * @return
+     */
+    public Map<String, Object> talkAccess(String memberkey, Integer accesstype, String accessaddr, String targetid) {
+        if (log.isTraceEnabled()) {
+            log.trace("request talkAccountSelect memberkey=[{}], accesstype=[{}], accessaddr=[{}], targetid=[{}]",
+                    memberkey, accesstype, accessaddr, targetid);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        param.put("accesstype",  parseIntParam(accesstype));
+        param.put("accessaddr",  accessaddr);
+        param.put("targetid",  targetid);
+        try {
+            final String s = this.postRequest(PATH_TALK_ACCESS, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 终端视频呼叫
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @param accesstype 接入网络类型(0:内网;1:公网;2:其他
+     * @param accessaddr 请求API的IP地址，当accesstype为2时为必填项
+     * @param targetid 目标方终端接入编码
+     * @return
+     */
+    public Map<String, Object> talkPlay(String memberkey, Integer accesstype, String accessaddr, String targetid) {
+        if (log.isTraceEnabled()) {
+            log.trace("request talkPlay memberkey=[{}], accesstype=[{}], accessaddr=[{}], targetid=[{}]",
+                    memberkey, accesstype, accessaddr, targetid);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        param.put("accesstype",  parseIntParam(accesstype));
+        param.put("accessaddr",  accessaddr);
+        param.put("targetid",  targetid);
+        try {
+            final String s = this.postRequest(PATH_TALK_PLAY, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 终端视频开启
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @param targetid 目标方终端接入编码*1
+     * @param sourceid 发起方终端接入编码*2
+     * @return
+     */
+    public Map<String, Object> talkStart(String memberkey, String targetid, String sourceid) {
+        if (log.isTraceEnabled()) {
+            log.trace("request talkStart memberkey=[{}], targetid=[{}], sourceid=[{}]",
+                    memberkey, targetid, sourceid);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        param.put("targetid",  targetid);
+        param.put("sourceid",  sourceid);
+        try {
+            final String s = this.postRequest(PATH_TALK_START, param);
+            final JSONObject jsonObject = JSONObject.parseObject(s);
+            return jsonObject.getInnerMap();
+        } catch (IOException e) {
+            log.info(e.getLocalizedMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 终端视频关闭
+     * @param memberkey 租户唯一识别码 默认为config中tenantKey
+     * @param targetid 发起方终端接入编码*1
+     * @param sourceid 目标方终端接入编码*2
+     * @return
+     */
+    public Map<String, Object> talkStop(String memberkey, String targetid, String sourceid) {
+        if (log.isTraceEnabled()) {
+            log.trace("request talkStop memberkey=[{}], targetid=[{}], sourceid=[{}]",
+                    memberkey, targetid, sourceid);
+        }
+        Map<String, String> param = new TreeMap<>();
+        param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
+        param.put("targetid",  targetid);
+        param.put("sourceid",  sourceid);
+        try {
+            final String s = this.postRequest(PATH_TALK_STOP, param);
             final JSONObject jsonObject = JSONObject.parseObject(s);
             return jsonObject.getInnerMap();
         } catch (IOException e) {
