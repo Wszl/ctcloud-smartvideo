@@ -111,7 +111,9 @@ public class ServiceRequestsTest {
 
     @Test
     public void testSystemVoiceApply() {
-        final Map<String, Object> stringObjectMap = this.serviceRequests.systemVoiceApply(null, null, null);
+        final String ip = System.getenv("IP");
+        final String sourceId = System.getenv("SOURCE_ID");
+        final Map<String, Object> stringObjectMap = this.serviceRequests.systemVoiceApply(null, sourceId, ip);
         System.out.println(stringObjectMap);
     }
 

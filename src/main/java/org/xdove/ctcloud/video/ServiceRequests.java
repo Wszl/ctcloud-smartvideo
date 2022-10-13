@@ -442,7 +442,7 @@ public class ServiceRequests {
         }
         Map<String, String> param = new TreeMap<>();
         param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
-        param.put("sourceId", sourceId);
+        param.put("sourceid", sourceId);
         param.put("ip", ip);
         try {
             final String s = this.postRequest(PATH_SYSTEM_VOICE_APPLY, param);
@@ -470,9 +470,9 @@ public class ServiceRequests {
         }
         Map<String, String> param = new TreeMap<>();
         param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
-        param.put("sourceId", sourceId);
-        param.put("targetId", targetId);
-        param.put("serialNum", serialNum);
+        param.put("sourceid", sourceId);
+        param.put("targetid", targetId);
+        param.put("serialnum", serialNum);
         try {
             final String s = this.postRequest(PATH_SYSTEM_VOICE_CONFIRM, param);
             final JSONObject jsonObject = JSONObject.parseObject(s);
@@ -499,9 +499,9 @@ public class ServiceRequests {
         }
         Map<String, String> param = new TreeMap<>();
         param.put("memberkey",  Objects.isNull(memberkey) ? config.getTenantKey() : memberkey);
-        param.put("sourceId", sourceId);
-        param.put("targetId", targetId);
-        param.put("serialNum", serialNum);
+        param.put("sourceid", sourceId);
+        param.put("targetid", targetId);
+        param.put("serialnum", serialNum);
         try {
             final String s = this.postRequest(PATH_SYSTEM_VOICE_DISCONNECT, param);
             final JSONObject jsonObject = JSONObject.parseObject(s);
