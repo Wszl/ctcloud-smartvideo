@@ -119,7 +119,10 @@ public class ServiceRequestsTest {
 
     @Test
     public void testSystemVoiceConfirm() {
-        final Map<String, Object> stringObjectMap = this.serviceRequests.systemVoiceConfirm(null, null, null, null);
+        final String sourceId = System.getenv("SOURCE_ID");
+        final String targetId = System.getenv("TARGET_ID");
+        final String serial_num = System.getenv("SERIAL_NUM");
+        final Map<String, Object> stringObjectMap = this.serviceRequests.systemVoiceConfirm(null, sourceId, targetId, serial_num);
         System.out.println(stringObjectMap);
     }
 

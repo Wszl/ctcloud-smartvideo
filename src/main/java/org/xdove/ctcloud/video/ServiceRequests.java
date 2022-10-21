@@ -71,7 +71,7 @@ public class ServiceRequests {
     /** 语音广播申请 */
     public static final String PATH_SYSTEM_VOICE_APPLY = "/system/voice/apply";
     /** 语音广播确认 */
-    public static final String PATH_SYSTEM_VOICE_CONFIRM = "/system/voice/apply";
+    public static final String PATH_SYSTEM_VOICE_CONFIRM = "/system/voice/confirm";
     /** 语音广播断开 */
     public static final String PATH_SYSTEM_VOICE_DISCONNECT = "/system/voice/disconnet";
 
