@@ -9,6 +9,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
@@ -40,6 +41,7 @@ public class ServiceRequests {
     private Config config;
     private MessageDigest messageDigest;
     private String urlPrefix;
+    private RequestConfig requestConfig;
 
     /** 提供获取区域编码的能力 */
     public static final String PATH_DICT_COMMON_AREA = "/common/area";
@@ -78,6 +80,11 @@ public class ServiceRequests {
     public ServiceRequests(Config config) throws NoSuchAlgorithmException, InvalidKeyException {
         this.config = config;
         this.client =  HttpClientBuilder.create().build();
+        this.requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(10000)
+                .setSocketTimeout(1000)
+                .setConnectTimeout(5000)
+                .build();
         messageDigest = MessageDigest.getInstance("MD5");
         if (Objects.nonNull(config.getUriPrefix())) {
             this.urlPrefix = config.getUriPrefix();
@@ -89,6 +96,11 @@ public class ServiceRequests {
     public ServiceRequests(HttpClient client, Config config) throws NoSuchAlgorithmException, InvalidKeyException {
         this.client = client;
         this.config = config;
+        this.requestConfig = RequestConfig.custom()
+                .setConnectionRequestTimeout(10000)
+                .setSocketTimeout(1000)
+                .setConnectTimeout(5000)
+                .build();
         messageDigest = MessageDigest.getInstance("MD5");
         if (Objects.nonNull(config.getUriPrefix())) {
             this.urlPrefix = config.getUriPrefix();
@@ -558,6 +570,7 @@ public class ServiceRequests {
     private String postRequest(String path, Map<String, String> p) throws IOException {
         String url = combPath(path);
         HttpPost post = new HttpPost(url);
+        post.setConfig(this.requestConfig);
         final HttpEntity body = combBody(p);
         if (log.isDebugEnabled()) {
             log.debug("post request path=[{}], body=[{}]", url, readInputStream(body.getContent(), config.getEncoding()));
@@ -588,6 +601,7 @@ public class ServiceRequests {
 
         URI url = combParam(p ,combPath(path));
         HttpGet get = new HttpGet(url);
+        get.setConfig(this.requestConfig);
         if (log.isDebugEnabled()) {
             log.debug("get request url=[{}]", url);
         }
