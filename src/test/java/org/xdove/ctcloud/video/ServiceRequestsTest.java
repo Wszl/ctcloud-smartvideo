@@ -40,14 +40,16 @@ public class ServiceRequestsTest {
     @Test
     public void testDictMediaPlay() {
         final String deviceId = System.getenv("DEVICE_ID");
-        final Map<String, Object> stringObjectMap = this.serviceRequests.dictMediaPlay(null, deviceId, 1, null, null);
+        final String protocolType = System.getenv("PROTOCOL_TYPE");
+        final Map<String, Object> stringObjectMap = this.serviceRequests.dictMediaPlay(null, deviceId, 1, null, null, protocolType);
         System.out.print(stringObjectMap);
     }
 
     @Test
     public void testDictMediaLive() {
         final String deviceId = System.getenv("DEVICE_ID");
-        final Map<String, Object> stringObjectMap = this.serviceRequests.dictMediaLive(null, deviceId, 1, null, null);
+        final String protocolType = System.getenv("M3U8_TYPE");
+        final Map<String, Object> stringObjectMap = this.serviceRequests.dictMediaLive(null, deviceId, 1, null, null, protocolType);
         System.out.print(stringObjectMap);
     }
 

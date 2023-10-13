@@ -18,7 +18,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.activation.MimeType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -198,10 +197,11 @@ public class ServiceRequests {
      * @param networktype 网络协议(0:UDP;1:TCP) 无默认值
      * @param accesstype 接入网络类型(0:内网;1:公网;2:其他) 默认值为 1
      * @param accessaddr 请求API的IP地址，当accesstype为2时为必填项 默认值为 null
+     * @param protocolType 协议类型(jvmp、http_flv、wss、rtmp、rtsp、https_flv、hls) (中维版本)
      * @return
      */
     public Map<String, Object> dictMediaPlay(String memberkey, @NonNull String deviceid, Integer networktype,
-                                             Integer accesstype, String accessaddr) {
+                                             Integer accesstype, String accessaddr, String protocolType) {
         if (log.isTraceEnabled()) {
             log.trace("request dictMediaPlay memberkey=[{}], deviceid=[{}], networktype=[{}], accesstype=[{}], " +
                     "accessaddr=[{}]", memberkey, deviceid, networktype, accesstype, accessaddr);
@@ -212,6 +212,7 @@ public class ServiceRequests {
         param.put("networktype", parseIntParam(networktype));
         param.put("accesstype", parseIntParam(accesstype));
         param.put("accessaddr", accessaddr);
+        param.put("protocolType", protocolType);
         try {
             final String s = this.postRequest(PATH_DICT_MEDIA_PLAY, param);
             final JSONObject jsonObject = JSONObject.parseObject(s);
@@ -229,10 +230,11 @@ public class ServiceRequests {
      * @param networktype 网络协议(0:UDP;1:TCP) 无默认值
      * @param accesstype 接入网络类型(0:内网;1:公网;2:其他) 默认值为 1
      * @param accessaddr 请求API的IP地址，当accesstype为2时为必填项 默认值为 null
+     * @param m3u8Type 1:https 0:http 默认0
      * @return
      */
     public Map<String, Object> dictMediaLive(String memberkey, @NonNull String deviceid, Integer networktype,
-                                                Integer accesstype, String accessaddr) {
+                                                Integer accesstype, String accessaddr, String m3u8Type) {
         if (log.isTraceEnabled()) {
             log.trace("request dictMediaLive memberkey=[{}], deviceid=[{}], networktype=[{}], accesstype=[{}], " +
                     "accessaddr=[{}]", memberkey, deviceid, networktype, accesstype, accessaddr);
@@ -243,6 +245,7 @@ public class ServiceRequests {
         param.put("networktype", parseIntParam(networktype));
         param.put("accesstype", parseIntParam(accesstype));
         param.put("accessaddr", accessaddr);
+        param.put("m3u8Type", m3u8Type);
         try {
             final String s = this.postRequest(PATH_DICT_MEDIA_LIVE, param);
             final JSONObject jsonObject = JSONObject.parseObject(s);
