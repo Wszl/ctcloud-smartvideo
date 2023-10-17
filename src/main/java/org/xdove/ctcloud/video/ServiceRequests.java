@@ -108,6 +108,18 @@ public class ServiceRequests {
         }
     }
 
+    public ServiceRequests(HttpClient client, Config config, RequestConfig requestConfig) throws NoSuchAlgorithmException, InvalidKeyException {
+        this.config = config;
+        this.client =  client;
+        this.requestConfig = requestConfig;
+        messageDigest = MessageDigest.getInstance("MD5");
+        if (Objects.nonNull(config.getUriPrefix())) {
+            this.urlPrefix = config.getUriPrefix();
+        } else {
+            this.urlPrefix = "/api/dict";
+        }
+    }
+
     public Map<String, Object> dictCommonArea(String areaCode) {
         if (log.isTraceEnabled()) {
             log.trace("request dictCommonArea [{}]", areaCode);
